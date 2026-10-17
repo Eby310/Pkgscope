@@ -1,0 +1,6 @@
+{
+  "name": "PkgScope",
+  "description": "Package size and dependency explorer for npm packages with bundle analysis, download trends, and side-by-side comparison.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

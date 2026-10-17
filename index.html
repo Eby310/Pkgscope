@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PkgScope — npm package size &amp; dependency explorer</title>
+    <meta
+      name="description"
+      content="Package size and dependency explorer for npm packages with bundle analysis, download trends, and side-by-side comparison."
+    />
+    <meta property="og:title" content="PkgScope — npm package size &amp; dependency explorer" />
+    <meta
+      property="og:description"
+      content="Package size and dependency explorer for npm packages with bundle analysis, download trends, and side-by-side comparison."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#090d16" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Top Navigation Bar -->
+    <header class="top-nav" role="banner">
+      <div class="nav-container">
+        <a href="/" class="brand" id="brand-link" aria-label="PkgScope Home">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m7.5 4.27 9 5.15" />
+            <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
+            <path d="m3.3 7 8.7 5 8.7-5" />
+            <path d="M12 22V12" />
+          </svg>
+          <span class="brand-name">PkgScope</span>
+        </a>
+
+        <!-- Sticky Search in Header (visible when package loaded or on scroll) -->
+        <div class="header-search-wrap" id="header-search-wrap">
+          <div class="search-input-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              type="text"
+              id="search-input"
+              class="search-input"
+              placeholder="Search npm package (e.g. zod, react, express)..."
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Search npm package"
+              aria-autocomplete="list"
+              aria-expanded="false"
+              aria-controls="autocomplete-dropdown"
+            />
+            <div class="search-kbd-hint" aria-hidden="true">
+              <kbd class="kbd-key">/</kbd>
+            </div>
+            <button
+              type="button"
+              id="search-clear-btn"
+              class="search-clear-btn hidden"
+              aria-label="Clear search text"
+            >
+              &times;
+            </button>
+          </div>
+
+          <!-- Live Autocomplete Dropdown -->
+          <ul
+            id="autocomplete-dropdown"
+            class="autocomplete-dropdown hidden"
+            role="listbox"
+            aria-label="Search suggestions"
+          ></ul>
+        </div>
+
+        <!-- Top Nav Actions -->
+        <div class="nav-actions">
+          <button
+            type="button"
+            id="compare-toggle-btn"
+            class="nav-btn"
+            aria-label="Toggle compare drawer"
+            title="Compare packages (shortcut: c)"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M16 3h5v5" />
+              <path d="M4 20L21 3" />
+              <path d="M21 16v5h-5" />
+              <path d="M15 15l6 6" />
+              <path d="M4 4l5 5" />
+            </svg>
+            <span class="nav-btn-text">Compare</span>
+            <span id="compare-badge" class="badge-count hidden">0</span>
+          </button>
+
+          <button
+            type="button"
+            id="theme-toggle-btn"
+            class="nav-icon-btn"
+            aria-label="Toggle dark/light theme"
+            title="Toggle theme"
+          >
+            <svg id="theme-sun-icon" class="theme-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+            <svg id="theme-moon-icon" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            id="shortcuts-btn"
+            class="nav-icon-btn"
+            aria-label="Keyboard shortcuts"
+            title="Keyboard shortcuts (?)"
+          >
+            <kbd class="header-kbd">?</kbd>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="app-main" class="main-content">
+      <!-- Landing View (Shown when no package selected) -->
+      <section id="landing-view" class="landing-hero" aria-label="Welcome">
+        <div class="landing-inner">
+          <div class="landing-badge">NPM Package Intelligence</div>
+          <h1 class="landing-title">Explore bundle size &amp; dependencies with clarity.</h1>
+          <p class="landing-subtitle">
+            Inspect minified &amp; gzipped weights, 12-month download trajectories, deep dependency trees, and health metrics before installing.
+          </p>
+
+          <!-- Centered Landing Search -->
+          <div class="landing-search-container">
+            <div class="search-input-box landing-search-box">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input
+                type="text"
+                id="landing-search-input"
+                class="search-input"
+                placeholder="Search npm package (e.g. zod, react, express)..."
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="Search npm package"
+              />
+              <div class="search-kbd-hint" aria-hidden="true">
+                <kbd class="kbd-key">/</kbd>
+              </div>
+            </div>
+          </div>
+
+          <!-- Example Package Chips -->
+          <div class="popular-chips-wrap">
+            <span class="chips-label">Popular packages:</span>
+            <div class="chips-list" id="popular-chips">
+              <button type="button" class="chip-btn" data-pkg="react">react</button>
+              <button type="button" class="chip-btn" data-pkg="lodash">lodash</button>
+              <button type="button" class="chip-btn" data-pkg="axios">axios</button>
+              <button type="button" class="chip-btn" data-pkg="express">express</button>
+              <button type="button" class="chip-btn" data-pkg="dayjs">dayjs</button>
+              <button type="button" class="chip-btn" data-pkg="zod">zod</button>
+            </div>
+          </div>
+
+          <!-- Recent Searches Section (Loaded if any exist) -->
+          <div id="recent-searches-box" class="recent-searches-box hidden">
+            <div class="recent-header">
+              <span class="chips-label">Recent searches:</span>
+              <button type="button" id="clear-recent-btn" class="text-link-btn">Clear</button>
+            </div>
+            <div class="chips-list" id="recent-chips-list"></div>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <div class="feature-strip">
+            <div class="feature-card">
+              <div class="feature-icon">⚡</div>
+              <h3>Bundlephobia &amp; Fallbacks</h3>
+              <p>Instant minified &amp; gzipped measurements with automatic jsDelivr file calculation fallback.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">🌳</div>
+              <h3>Deep Dependency Tree</h3>
+              <p>Interactive 3-level tree expansion with lazy node resolution and high-footprint alerts.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">⚖️</div>
+              <h3>Side-by-Side Compare</h3>
+              <p>Benchmark up to 4 libraries simultaneously with green highlight on best metrics.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Active Package View Container -->
+      <section id="package-view" class="package-view hidden" aria-label="Package Details">
+        <!-- Sub-header bar with Recent Searches & Version Switcher -->
+        <div class="package-subbar">
+          <div class="subbar-left">
+            <button type="button" id="back-home-btn" class="subbar-back-btn" aria-label="Back to home">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+              </svg>
+              <span>Explore</span>
+            </button>
+            <div id="recent-chips-subbar" class="subbar-recent"></div>
+          </div>
+          <div class="subbar-right">
+            <button type="button" id="share-btn" class="action-btn-secondary" title="Copy shareable link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+              <span>Share</span>
+            </button>
+            <button type="button" id="add-compare-btn" class="action-btn-secondary" title="Add to compare mode">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              <span id="add-compare-text">Compare</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Global Error Banner if whole package load fails -->
+        <div id="package-error-banner" class="error-banner hidden" role="alert">
+          <div class="error-content">
+            <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <div class="error-text">
+              <strong id="error-title">Package not found</strong>
+              <p id="error-message">Could not fetch package from the npm registry. Please check the name and try again.</p>
+            </div>
+          </div>
+          <button type="button" id="package-retry-btn" class="retry-btn">Retry</button>
+        </div>
+
+        <!-- Deprecation Warning Banner -->
+        <div id="deprecation-banner" class="deprecation-banner hidden" role="alert">
+          <svg class="banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <div class="banner-text">
+            <strong>Package Deprecated:</strong>
+            <span id="deprecation-reason">This package has been deprecated by the author.</span>
+          </div>
+        </div>
+
+        <!-- Main Package Grid Layout -->
+        <div class="package-layout">
+          <!-- Left Main Column -->
+          <div class="package-main-col">
+            <!-- 1. Package Overview Card -->
+            <article id="overview-card" class="panel-card overview-card">
+              <div class="card-loading-skeleton" id="overview-skeleton">
+                <div class="skeleton-line skeleton-title"></div>
+                <div class="skeleton-line skeleton-desc"></div>
+                <div class="skeleton-row">
+                  <div class="skeleton-pill"></div>
+                  <div class="skeleton-pill"></div>
+                  <div class="skeleton-pill"></div>
+                </div>
+              </div>
+              <div id="overview-content" class="overview-content hidden">
+                <div class="overview-header-row">
+                  <div class="title-wrap">
+                    <h1 id="pkg-name" class="pkg-title font-mono">--</h1>
+                    <div class="version-select-wrap">
+                      <label for="version-select" class="sr-only">Select version</label>
+                      <select id="version-select" class="version-dropdown font-mono"></select>
+                    </div>
+                  </div>
+                  <div class="overview-external-links">
+                    <a id="npm-link" href="#" target="_blank" rel="noopener noreferrer" class="ext-link" title="Open on npm">
+                      <span class="font-mono">npm</span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </a>
+                    <a id="repo-link" href="#" target="_blank" rel="noopener noreferrer" class="ext-link hidden" title="Repository">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                      <span>GitHub</span>
+                    </a>
+                    <a id="homepage-link" href="#" target="_blank" rel="noopener noreferrer" class="ext-link hidden" title="Homepage">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                      <span>Homepage</span>
+                    </a>
+                  </div>
+                </div>
+
+                <p id="pkg-description" class="pkg-description">--</p>
+
+                <div class="metadata-grid">
+                  <div class="meta-item">
+                    <span class="meta-label">License</span>
+                    <span id="pkg-license" class="meta-value font-mono">--</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">Author</span>
+                    <span id="pkg-author" class="meta-value">--</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">Last Published</span>
+                    <span id="pkg-published" class="meta-value tabular-nums">--</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">Total Versions</span>
+                    <span id="pkg-versions-count" class="meta-value font-mono tabular-nums">--</span>
+                  </div>
+                  <div class="meta-item">
+                    <span class="meta-label">Maintainers</span>
+                    <span id="pkg-maintainers" class="meta-value tabular-nums">--</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- 2. Bundle Size Section -->
+            <section id="size-section" class="panel-card size-card" aria-label="Bundle Size">
+              <div class="section-title-row">
+                <div class="title-with-source">
+                  <h2 class="section-heading">Bundle Footprint</h2>
+                  <span id="size-source-badge" class="source-tag">via Bundlephobia</span>
+                </div>
+                <button type="button" id="size-retry-btn" class="retry-btn-small hidden">Retry size</button>
+              </div>
+
+              <!-- Size skeleton -->
+              <div class="card-loading-skeleton" id="size-skeleton">
+                <div class="size-cards-grid">
+                  <div class="skeleton-box" style="height: 100px;"></div>
+                  <div class="skeleton-box" style="height: 100px;"></div>
+                  <div class="skeleton-box" style="height: 100px;"></div>
+                </div>
+              </div>
+
+              <!-- Size Error Notice -->
+              <div id="size-error-notice" class="notice-box hidden">
+                <p id="size-error-text">Bundle size could not be retrieved from Bundlephobia or jsDelivr.</p>
+                <span class="notice-subtext">The package might be native-only, private, or have complex export maps.</span>
+              </div>
+
+              <!-- Size Cards Grid -->
+              <div id="size-cards-grid" class="size-cards-grid hidden">
+                <div class="metric-card">
+                  <span class="metric-title">Minified</span>
+                  <div class="metric-val-wrap">
+                    <span id="size-minified" class="metric-value font-mono tabular-nums">--</span>
+                  </div>
+                  <span class="metric-subtext">Raw uncompressed script</span>
+                </div>
+
+                <div class="metric-card metric-card-accent">
+                  <span class="metric-title">Minified + Gzipped</span>
+                  <div class="metric-val-wrap">
+                    <span id="size-gzipped" class="metric-value font-mono tabular-nums">--</span>
+                    <span id="gzip-compression-ratio" class="compression-pill font-mono">--</span>
+                  </div>
+                  <span class="metric-subtext">Network transfer payload</span>
+                </div>
+
+                <div class="metric-card">
+                  <span class="metric-title">Estimated Download</span>
+                  <div class="download-speeds font-mono">
+                    <div class="speed-row">
+                      <span class="speed-label">Slow 3G:</span>
+                      <span id="speed-3g" class="speed-val tabular-nums">--</span>
+                    </div>
+                    <div class="speed-row">
+                      <span class="speed-label">4G (30Mbps):</span>
+                      <span id="speed-4g" class="speed-val tabular-nums">--</span>
+                    </div>
+                  </div>
+                  <span class="metric-subtext">Time to first execution byte</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- 3. Health & Readiness Section -->
+            <section id="health-section" class="panel-card" aria-label="Package Health">
+              <h2 class="section-heading">Package Health Indicators</h2>
+              <div class="health-grid" id="health-grid">
+                <!-- Badges populated dynamically -->
+                <div class="health-card" id="health-types">
+                  <div class="health-icon" id="icon-types">🟦</div>
+                  <div class="health-body">
+                    <strong class="health-label" id="label-types">TypeScript Support</strong>
+                    <span class="health-status" id="status-types">Checking...</span>
+                  </div>
+                </div>
+
+                <div class="health-card" id="health-esm">
+                  <div class="health-icon" id="icon-esm">📦</div>
+                  <div class="health-body">
+                    <strong class="health-label" id="label-esm">Module Format</strong>
+                    <span class="health-status" id="status-esm">Checking...</span>
+                  </div>
+                </div>
+
+                <div class="health-card" id="health-treeshake">
+                  <div class="health-icon" id="icon-treeshake">🍃</div>
+                  <div class="health-body">
+                    <strong class="health-label" id="label-treeshake">Tree Shakeable</strong>
+                    <span class="health-status" id="status-treeshake">Checking...</span>
+                  </div>
+                </div>
+
+                <div class="health-card" id="health-maintenance">
+                  <div class="health-icon" id="icon-maintenance">⏱️</div>
+                  <div class="health-body">
+                    <strong class="health-label" id="label-maintenance">Maintenance Activity</strong>
+                    <span class="health-status" id="status-maintenance">Checking...</span>
+                  </div>
+                </div>
+
+                <div class="health-card" id="health-maintainers">
+                  <div class="health-icon" id="icon-maintainers">👥</div>
+                  <div class="health-body">
+                    <strong class="health-label" id="label-maintainers">Maintainer Base</strong>
+                    <span class="health-status" id="status-maintainers">Checking...</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 4. Download Trends & Version History Charts -->
+            <section class="panel-card" aria-label="Trends and History">
+              <div class="chart-box">
+                <div class="chart-header">
+                  <div>
+                    <h2 class="section-heading">Weekly Downloads Trend</h2>
+                    <span class="chart-subtitle">npm downloads over the past 12 months</span>
+                  </div>
+                  <div class="current-dl-pill">
+                    <span class="current-dl-label">Last 7 Days:</span>
+                    <strong id="current-weekly-dl" class="current-dl-value font-mono tabular-nums">--</strong>
+                  </div>
+                </div>
+                <div class="canvas-container">
+                  <canvas id="downloads-chart" class="chart-canvas" width="800" height="260" aria-label="Weekly downloads chart"></canvas>
+                  <div id="downloads-chart-tooltip" class="canvas-tooltip hidden"></div>
+                </div>
+              </div>
+
+              <div class="chart-divider"></div>
+
+              <div class="chart-box">
+                <div class="chart-header">
+                  <div>
+                    <h2 class="section-heading">Version Bloat History</h2>
+                    <span class="chart-subtitle">Gzipped bundle size across last 15 releases</span>
+                  </div>
+                  <div id="versions-chart-status" class="chart-status-pill font-mono">
+                    <span id="versions-progress-text">Loading releases...</span>
+                  </div>
+                </div>
+                <div class="canvas-container">
+                  <canvas id="versions-chart" class="chart-canvas" width="800" height="260" aria-label="Version size history chart"></canvas>
+                  <div id="versions-chart-tooltip" class="canvas-tooltip hidden"></div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 5. Dependencies Explorer Tree -->
+            <section id="deps-section" class="panel-card" aria-label="Dependencies Explorer">
+              <div class="section-title-row">
+                <div class="title-with-source">
+                  <h2 class="section-heading">Dependency Explorer</h2>
+                  <span id="deps-count-badge" class="badge-pill font-mono">0 direct dependencies</span>
+                </div>
+                <div id="deps-warning-badge" class="warning-badge hidden">
+                  ⚠️ Heavy dependency graph (&gt; 10 dependencies)
+                </div>
+              </div>
+              <p class="section-subtext">Click any dependency node below to expand its sub-dependencies (up to 3 levels deep).</p>
+
+              <div id="deps-tree-container" class="deps-tree-container">
+                <!-- Tree populated here -->
+                <div class="empty-state-notice" id="deps-empty-state">No direct dependencies (0 dependencies 🎉)</div>
+              </div>
+
+              <!-- Peer dependencies section -->
+              <div id="peer-deps-wrap" class="peer-deps-wrap hidden">
+                <h3 class="subsection-heading">Peer Dependencies</h3>
+                <div id="peer-deps-list" class="peer-deps-list"></div>
+              </div>
+            </section>
+
+            <!-- 6. Alternatives Section -->
+            <section id="alternatives-section" class="panel-card" aria-label="Similar Packages &amp; Alternatives">
+              <div class="section-title-row">
+                <div>
+                  <h2 class="section-heading">Similar Alternatives</h2>
+                  <p class="section-subtext" id="alternatives-subtext">Packages discovered via keyword matching</p>
+                </div>
+              </div>
+              <div id="alternatives-grid" class="alternatives-grid">
+                <!-- Alternatives cards injected here -->
+              </div>
+            </section>
+          </div>
+
+          <!-- Right Sidebar / Quick Actions Column -->
+          <aside class="package-side-col" aria-label="Installation &amp; Actions">
+            <!-- Install Snippet Box -->
+            <div class="panel-card sticky-sidebar-card">
+              <h3 class="sidebar-heading">Install Package</h3>
+              <div class="snippet-tabs" role="tablist" aria-label="Package Manager">
+                <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-pm="npm">npm</button>
+                <button type="button" class="tab-btn" role="tab" aria-selected="false" data-pm="pnpm">pnpm</button>
+                <button type="button" class="tab-btn" role="tab" aria-selected="false" data-pm="yarn">yarn</button>
+                <button type="button" class="tab-btn" role="tab" aria-selected="false" data-pm="bun">bun</button>
+              </div>
+              <div class="snippet-code-box">
+                <code id="install-command-text" class="font-mono">npm i package-name</code>
+                <button type="button" id="copy-snippet-btn" class="copy-btn" aria-label="Copy install command" title="Copy command">
+                  <svg id="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  <svg id="check-icon" class="hidden text-emerald" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Quick action links -->
+              <div class="sidebar-links-list">
+                <a id="unpkg-link" href="#" target="_blank" rel="noopener noreferrer" class="sidebar-action-link">
+                  <span>Browse files on unpkg</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+                <a id="jsdelivr-link" href="#" target="_blank" rel="noopener noreferrer" class="sidebar-action-link">
+                  <span>CDN on jsDelivr</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Compare Mode Modal / Drawer -->
+      <div id="compare-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="compare-modal-title">
+        <div class="modal-content compare-modal-content">
+          <div class="modal-header">
+            <div class="modal-title-wrap">
+              <h2 id="compare-modal-title" class="modal-title">Side-by-Side Package Compare</h2>
+              <span class="modal-subtitle">Compare up to 4 packages on size, dependencies, health, and downloads</span>
+            </div>
+            <button type="button" id="close-compare-btn" class="modal-close-btn" aria-label="Close compare view">&times;</button>
+          </div>
+
+          <div class="compare-toolbar">
+            <!-- Add package to compare input -->
+            <form id="compare-add-form" class="compare-add-form">
+              <input
+                type="text"
+                id="compare-search-input"
+                class="search-input compare-input font-mono"
+                placeholder="Add package to compare (e.g. preact)..."
+                autocomplete="off"
+              />
+              <button type="submit" class="btn-primary">Add</button>
+            </form>
+            <div class="compare-hint">Best metric in each row highlighted in green</div>
+          </div>
+
+          <!-- Compare Bar Chart -->
+          <div class="compare-chart-card">
+            <h3 class="subsection-heading">Gzipped Bundle Size Comparison</h3>
+            <div class="canvas-container">
+              <canvas id="compare-bar-chart" class="chart-canvas" width="700" height="180" aria-label="Compare bar chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Compare Table with Horizontal Scroll -->
+          <div class="compare-table-wrap">
+            <table class="compare-table" id="compare-table">
+              <thead>
+                <tr id="compare-thead-row">
+                  <th class="metric-col">Metric</th>
+                  <!-- Columns injected dynamically -->
+                </tr>
+              </thead>
+              <tbody id="compare-tbody">
+                <!-- Rows injected dynamically -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" id="clear-compare-btn" class="text-link-btn text-danger">Clear all packages</button>
+            <button type="button" id="copy-compare-link-btn" class="action-btn-secondary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+              <span>Share Compare Link</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Keyboard Shortcuts Modal -->
+      <div id="shortcuts-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="shortcuts-modal-title">
+        <div class="modal-content shortcuts-modal-content">
+          <div class="modal-header">
+            <h2 id="shortcuts-modal-title" class="modal-title">Keyboard Shortcuts</h2>
+            <button type="button" id="close-shortcuts-btn" class="modal-close-btn" aria-label="Close shortcuts modal">&times;</button>
+          </div>
+          <div class="shortcuts-list">
+            <div class="shortcut-row">
+              <span class="shortcut-desc">Focus search bar</span>
+              <kbd class="kbd-key">/</kbd>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-desc">Toggle compare mode</span>
+              <kbd class="kbd-key">c</kbd>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-desc">Close modals / dropdowns</span>
+              <kbd class="kbd-key">Esc</kbd>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-desc">Navigate autocomplete</span>
+              <div class="kbd-group">
+                <kbd class="kbd-key">&uarr;</kbd>
+                <kbd class="kbd-key">&darr;</kbd>
+              </div>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-desc">Select suggestion</span>
+              <kbd class="kbd-key">&crarr; Enter</kbd>
+            </div>
+            <div class="shortcut-row">
+              <span class="shortcut-desc">Show this help</span>
+              <kbd class="kbd-key">?</kbd>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Notification Alert -->
+      <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <span class="footer-wordmark font-mono">PkgScope</span>
+          <span class="footer-copy">Clean package intelligence for JavaScript &amp; TypeScript engineers.</span>
+        </div>
+        <div class="footer-right">
+          <span>Data from npm registry, Bundlephobia, and jsDelivr</span>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
