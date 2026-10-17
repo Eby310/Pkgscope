@@ -15,7 +15,7 @@
     />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#090d16" />
+    <meta name="theme-color" content="#ffffff" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -38,7 +38,7 @@
           <span class="brand-name">PkgScope</span>
         </a>
 
-        <!-- Sticky Search in Header (visible when package loaded or on scroll) -->
+        <!-- Search Bar in Header -->
         <div class="header-search-wrap" id="header-search-wrap">
           <div class="search-input-box">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -101,29 +101,6 @@
 
           <button
             type="button"
-            id="theme-toggle-btn"
-            class="nav-icon-btn"
-            aria-label="Toggle dark/light theme"
-            title="Toggle theme"
-          >
-            <svg id="theme-sun-icon" class="theme-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <circle cx="12" cy="12" r="5" />
-              <line x1="12" y1="1" x2="12" y2="3" />
-              <line x1="12" y1="21" x2="12" y2="23" />
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-              <line x1="1" y1="12" x2="3" y2="12" />
-              <line x1="21" y1="12" x2="23" y2="12" />
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-            </svg>
-            <svg id="theme-moon-icon" class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-          </button>
-
-          <button
-            type="button"
             id="shortcuts-btn"
             class="nav-icon-btn"
             aria-label="Keyboard shortcuts"
@@ -139,10 +116,10 @@
       <!-- Landing View (Shown when no package selected) -->
       <section id="landing-view" class="landing-hero" aria-label="Welcome">
         <div class="landing-inner">
-          <div class="landing-badge">NPM Package Intelligence</div>
-          <h1 class="landing-title">Explore bundle size &amp; dependencies with clarity.</h1>
+          <div class="landing-badge">Package Registry Explorer</div>
+          <h1 class="landing-title">Explore bundle sizes and dependencies with clarity.</h1>
           <p class="landing-subtitle">
-            Inspect minified &amp; gzipped weights, 12-month download trajectories, deep dependency trees, and health metrics before installing.
+            Inspect minified and gzipped sizes, 12-month download trajectories, dependency trees, and health indicators before installing.
           </p>
 
           <!-- Centered Landing Search -->
@@ -189,22 +166,43 @@
             <div class="chips-list" id="recent-chips-list"></div>
           </div>
 
-          <!-- Feature Cards Grid -->
+          <!-- Feature Cards Grid (Clean SVG icons, no emojis) -->
           <div class="feature-strip">
             <div class="feature-card">
-              <div class="feature-icon">⚡</div>
+              <div class="feature-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
+              </div>
               <h3>Bundlephobia &amp; Fallbacks</h3>
-              <p>Instant minified &amp; gzipped measurements with automatic jsDelivr file calculation fallback.</p>
+              <p>Minified and gzipped sizes with automatic jsDelivr file inspection fallback.</p>
             </div>
             <div class="feature-card">
-              <div class="feature-icon">🌳</div>
+              <div class="feature-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="3" width="7" height="7" rx="1"/>
+                  <rect x="14" y="3" width="7" height="7" rx="1"/>
+                  <rect x="14" y="14" width="7" height="7" rx="1"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1"/>
+                  <path d="M7 10v4"/>
+                  <path d="M14 7h-4"/>
+                </svg>
+              </div>
               <h3>Deep Dependency Tree</h3>
-              <p>Interactive 3-level tree expansion with lazy node resolution and high-footprint alerts.</p>
+              <p>Expandable multi-level tree with lazy node resolution and high-footprint alerts.</p>
             </div>
             <div class="feature-card">
-              <div class="feature-icon">⚖️</div>
+              <div class="feature-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M16 3h5v5"/>
+                  <path d="M4 20L21 3"/>
+                  <path d="M21 16v5h-5"/>
+                  <path d="M15 15l6 6"/>
+                  <path d="M4 4l5 5"/>
+                </svg>
+              </div>
               <h3>Side-by-Side Compare</h3>
-              <p>Benchmark up to 4 libraries simultaneously with green highlight on best metrics.</p>
+              <p>Benchmark up to 4 libraries simultaneously with clear indicators on optimal metrics.</p>
             </div>
           </div>
         </div>
@@ -354,9 +352,9 @@
               <!-- Size skeleton -->
               <div class="card-loading-skeleton" id="size-skeleton">
                 <div class="size-cards-grid">
-                  <div class="skeleton-box" style="height: 100px;"></div>
-                  <div class="skeleton-box" style="height: 100px;"></div>
-                  <div class="skeleton-box" style="height: 100px;"></div>
+                  <div class="skeleton-box" style="height: 96px;"></div>
+                  <div class="skeleton-box" style="height: 96px;"></div>
+                  <div class="skeleton-box" style="height: 96px;"></div>
                 </div>
               </div>
 
@@ -402,13 +400,18 @@
               </div>
             </section>
 
-            <!-- 3. Health & Readiness Section -->
+            <!-- 3. Health & Readiness Section (Clean SVGs, no emojis) -->
             <section id="health-section" class="panel-card" aria-label="Package Health">
               <h2 class="section-heading">Package Health Indicators</h2>
               <div class="health-grid" id="health-grid">
-                <!-- Badges populated dynamically -->
                 <div class="health-card" id="health-types">
-                  <div class="health-icon" id="icon-types">🟦</div>
+                  <div class="health-icon" id="icon-types">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M4 7V4h16v3"/>
+                      <path d="M9 20h6"/>
+                      <path d="M12 4v16"/>
+                    </svg>
+                  </div>
                   <div class="health-body">
                     <strong class="health-label" id="label-types">TypeScript Support</strong>
                     <span class="health-status" id="status-types">Checking...</span>
@@ -416,7 +419,13 @@
                 </div>
 
                 <div class="health-card" id="health-esm">
-                  <div class="health-icon" id="icon-esm">📦</div>
+                  <div class="health-icon" id="icon-esm">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                      <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                      <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                  </div>
                   <div class="health-body">
                     <strong class="health-label" id="label-esm">Module Format</strong>
                     <span class="health-status" id="status-esm">Checking...</span>
@@ -424,7 +433,12 @@
                 </div>
 
                 <div class="health-card" id="health-treeshake">
-                  <div class="health-icon" id="icon-treeshake">🍃</div>
+                  <div class="health-icon" id="icon-treeshake">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M12 2v20"/>
+                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                  </div>
                   <div class="health-body">
                     <strong class="health-label" id="label-treeshake">Tree Shakeable</strong>
                     <span class="health-status" id="status-treeshake">Checking...</span>
@@ -432,7 +446,12 @@
                 </div>
 
                 <div class="health-card" id="health-maintenance">
-                  <div class="health-icon" id="icon-maintenance">⏱️</div>
+                  <div class="health-icon" id="icon-maintenance">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10"/>
+                      <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                  </div>
                   <div class="health-body">
                     <strong class="health-label" id="label-maintenance">Maintenance Activity</strong>
                     <span class="health-status" id="status-maintenance">Checking...</span>
@@ -440,7 +459,14 @@
                 </div>
 
                 <div class="health-card" id="health-maintainers">
-                  <div class="health-icon" id="icon-maintainers">👥</div>
+                  <div class="health-icon" id="icon-maintainers">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                  </div>
                   <div class="health-body">
                     <strong class="health-label" id="label-maintainers">Maintainer Base</strong>
                     <span class="health-status" id="status-maintainers">Checking...</span>
@@ -495,14 +521,18 @@
                   <span id="deps-count-badge" class="badge-pill font-mono">0 direct dependencies</span>
                 </div>
                 <div id="deps-warning-badge" class="warning-badge hidden">
-                  ⚠️ Heavy dependency graph (&gt; 10 dependencies)
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="badge-icon-svg" aria-hidden="true">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  <span>Heavy dependency footprint (&gt; 10 dependencies)</span>
                 </div>
               </div>
               <p class="section-subtext">Click any dependency node below to expand its sub-dependencies (up to 3 levels deep).</p>
 
               <div id="deps-tree-container" class="deps-tree-container">
-                <!-- Tree populated here -->
-                <div class="empty-state-notice" id="deps-empty-state">No direct dependencies (0 dependencies 🎉)</div>
+                <div class="empty-state-notice" id="deps-empty-state">No direct dependencies (self-contained package)</div>
               </div>
 
               <!-- Peer dependencies section -->
@@ -589,7 +619,7 @@
               />
               <button type="submit" class="btn-primary">Add</button>
             </form>
-            <div class="compare-hint">Best metric in each row highlighted in green</div>
+            <div class="compare-hint">Optimal metric highlighted in green</div>
           </div>
 
           <!-- Compare Bar Chart -->
@@ -679,7 +709,7 @@
       <div class="footer-inner">
         <div class="footer-left">
           <span class="footer-wordmark font-mono">PkgScope</span>
-          <span class="footer-copy">Clean package intelligence for JavaScript &amp; TypeScript engineers.</span>
+          <span class="footer-copy">Package intelligence for JavaScript and TypeScript engineers.</span>
         </div>
         <div class="footer-right">
           <span>Data from npm registry, Bundlephobia, and jsDelivr</span>

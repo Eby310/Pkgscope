@@ -522,9 +522,9 @@ function drawDownloadsChart(canvas, history, isDark) {
 
   // Grid lines
   const gridLines = 4;
-  ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.07)' : 'rgba(0, 0, 0, 0.06)';
+  ctx.strokeStyle = '#e2e8f0';
   ctx.lineWidth = 1;
-  ctx.fillStyle = isDark ? '#64748b' : '#94a3b8';
+  ctx.fillStyle = '#64748b';
   ctx.font = '11px JetBrains Mono, monospace';
   ctx.textAlign = 'right';
 
@@ -547,23 +547,19 @@ function drawDownloadsChart(canvas, history, isDark) {
     return { x, y, data: d };
   });
 
-  // Draw area gradient
-  const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
-  gradient.addColorStop(0, isDark ? 'rgba(99, 102, 241, 0.35)' : 'rgba(79, 70, 229, 0.25)');
-  gradient.addColorStop(1, isDark ? 'rgba(99, 102, 241, 0.0)' : 'rgba(79, 70, 229, 0.0)');
-
+  // Flat area fill (zero gradients)
   ctx.beginPath();
   ctx.moveTo(points[0].x, padding.top + chartH);
   points.forEach((pt) => ctx.lineTo(pt.x, pt.y));
   ctx.lineTo(points[points.length - 1].x, padding.top + chartH);
   ctx.closePath();
-  ctx.fillStyle = gradient;
+  ctx.fillStyle = 'rgba(37, 99, 235, 0.05)';
   ctx.fill();
 
-  // Draw stroke line
+  // Draw crisp stroke line
   ctx.beginPath();
-  ctx.strokeStyle = isDark ? '#818cf8' : '#4f46e5';
-  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = '#2563eb';
+  ctx.lineWidth = 2;
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
   points.forEach((pt, idx) => {
@@ -573,14 +569,14 @@ function drawDownloadsChart(canvas, history, isDark) {
   ctx.stroke();
 
   // Draw date labels on X axis
-  ctx.fillStyle = isDark ? '#64748b' : '#94a3b8';
+  ctx.fillStyle = '#64748b';
   ctx.textAlign = 'center';
   const labelInterval = Math.ceil(weeklyData.length / 5);
   points.forEach((pt, idx) => {
     if (idx % labelInterval === 0 || idx === points.length - 1) {
       const parts = pt.data.date.split('-');
       const label = parts.length >= 2 ? `${parts[1]}/${parts[0].slice(2)}` : pt.data.date;
-      ctx.fillText(label, pt.x, height - padding.bottom + 20);
+      ctx.fillText(label, pt.x, height - padding.bottom + 18);
     }
   });
 
@@ -646,9 +642,9 @@ function drawVersionsChart(canvas, versionsData, isDark) {
 
   // Grid lines
   const gridLines = 4;
-  ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.07)' : 'rgba(0, 0, 0, 0.06)';
+  ctx.strokeStyle = '#e2e8f0';
   ctx.lineWidth = 1;
-  ctx.fillStyle = isDark ? '#64748b' : '#94a3b8';
+  ctx.fillStyle = '#64748b';
   ctx.font = '11px JetBrains Mono, monospace';
   ctx.textAlign = 'right';
 
@@ -671,23 +667,19 @@ function drawVersionsChart(canvas, versionsData, isDark) {
     return { x, y, data: item };
   });
 
-  // Area
-  const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
-  gradient.addColorStop(0, isDark ? 'rgba(16, 185, 129, 0.35)' : 'rgba(5, 150, 105, 0.25)');
-  gradient.addColorStop(1, isDark ? 'rgba(16, 185, 129, 0.0)' : 'rgba(5, 150, 105, 0.0)');
-
+  // Flat area fill (zero gradients)
   ctx.beginPath();
   ctx.moveTo(points[0].x, padding.top + chartH);
   points.forEach((pt) => ctx.lineTo(pt.x, pt.y));
   ctx.lineTo(points[points.length - 1].x, padding.top + chartH);
   ctx.closePath();
-  ctx.fillStyle = gradient;
+  ctx.fillStyle = 'rgba(5, 150, 105, 0.05)';
   ctx.fill();
 
   // Line
   ctx.beginPath();
-  ctx.strokeStyle = isDark ? '#34d399' : '#059669';
-  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = '#059669';
+  ctx.lineWidth = 2;
   ctx.lineJoin = 'round';
   points.forEach((pt, idx) => {
     if (idx === 0) ctx.moveTo(pt.x, pt.y);
@@ -698,23 +690,23 @@ function drawVersionsChart(canvas, versionsData, isDark) {
   // Point circles
   points.forEach((pt) => {
     ctx.beginPath();
-    ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
-    ctx.fillStyle = isDark ? '#090d16' : '#ffffff';
+    ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
     ctx.fill();
-    ctx.strokeStyle = isDark ? '#34d399' : '#059669';
+    ctx.strokeStyle = '#059669';
     ctx.lineWidth = 2;
     ctx.stroke();
   });
 
   // Version labels
-  ctx.fillStyle = isDark ? '#94a3b8' : '#475569';
+  ctx.fillStyle = '#64748b';
   ctx.textAlign = 'center';
   ctx.font = '10px JetBrains Mono, monospace';
 
   const labelStep = Math.ceil(valid.length / 8);
   points.forEach((pt, idx) => {
     if (idx % labelStep === 0 || idx === points.length - 1) {
-      ctx.fillText(pt.data.version, pt.x, height - padding.bottom + 20);
+      ctx.fillText(pt.data.version, pt.x, height - padding.bottom + 18);
     }
   });
 
@@ -1056,7 +1048,9 @@ function renderDependencies(versionObj) {
   const warningBadge = document.getElementById('deps-warning-badge');
   if (depKeys.length > 10) {
     warningBadge.classList.remove('hidden');
-    warningBadge.textContent = `⚠️ Heavy dependency graph (${depKeys.length} dependencies)`;
+    const span = warningBadge.querySelector('span');
+    if (span) span.textContent = `Heavy dependency footprint (${depKeys.length} dependencies)`;
+    else warningBadge.textContent = `Heavy dependency footprint (${depKeys.length} dependencies)`;
   } else {
     warningBadge.classList.add('hidden');
   }
@@ -1067,7 +1061,7 @@ function renderDependencies(versionObj) {
   if (depKeys.length === 0) {
     const emptyNotice = document.createElement('div');
     emptyNotice.className = 'empty-state-notice';
-    emptyNotice.textContent = 'Zero direct dependencies (self-contained package 🎉)';
+    emptyNotice.textContent = 'Zero direct dependencies (self-contained package)';
     treeContainer.appendChild(emptyNotice);
   } else {
     const ul = document.createElement('ul');
@@ -1117,7 +1111,9 @@ function createTreeNode(name, versionSpec, depth) {
 
   const caret = document.createElement('span');
   caret.className = 'tree-toggle-caret';
-  caret.innerHTML = depth < CONFIG.MAX_TREE_DEPTH ? '&#9654;' : '&bull;';
+  caret.innerHTML = depth < CONFIG.MAX_TREE_DEPTH
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><polyline points="9 18 15 12 9 6"></polyline></svg>'
+    : '<span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:currentColor;"></span>';
 
   const nameSpan = document.createElement('span');
   nameSpan.className = 'tree-node-name';
@@ -1644,19 +1640,19 @@ async function fetchAndRenderCompare() {
     {
       label: 'TypeScript',
       key: 'hasTypes',
-      formatter: (pkg) => (pkg.hasTypes ? '✅ Built-in' : '❌ No types'),
+      formatter: (pkg) => (pkg.hasTypes ? 'Built-in' : 'None'),
       isBest: (pkg) => pkg.hasTypes,
     },
     {
       label: 'ESM Support',
       key: 'isEsm',
-      formatter: (pkg) => (pkg.isEsm ? '✅ ESM' : 'CommonJS'),
+      formatter: (pkg) => (pkg.isEsm ? 'ESM' : 'CommonJS'),
       isBest: (pkg) => pkg.isEsm,
     },
     {
       label: 'Tree-Shakeable',
       key: 'isTreeShakeable',
-      formatter: (pkg) => (pkg.isTreeShakeable ? '✅ Yes' : 'No'),
+      formatter: (pkg) => (pkg.isTreeShakeable ? 'Yes' : 'No'),
       isBest: (pkg) => pkg.isTreeShakeable,
     },
   ];
@@ -2050,47 +2046,8 @@ function closeAutocomplete() {
 // ============================================================================
 
 function setupTheme() {
-  const themeBtn = document.getElementById('theme-toggle-btn');
-  const sunIcon = document.getElementById('theme-sun-icon');
-  const moonIcon = document.getElementById('theme-moon-icon');
-
-  // Check stored theme or prefers-color-scheme
-  const storedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.THEME);
-  const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  state.theme = storedTheme || (systemPrefersDark ? 'dark' : 'light');
-
-  applyTheme(state.theme);
-
-  themeBtn.addEventListener('click', () => {
-    state.theme = state.theme === 'dark' ? 'light' : 'dark';
-    try {
-      localStorage.setItem(CONFIG.STORAGE_KEYS.THEME, state.theme);
-    } catch {
-      // ignore
-    }
-    applyTheme(state.theme);
-  });
-
-  function applyTheme(theme) {
-    if (theme === 'light') {
-      document.documentElement.setAttribute('data-theme', 'light');
-      sunIcon.classList.remove('hidden');
-      moonIcon.classList.add('hidden');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-      sunIcon.classList.add('hidden');
-      moonIcon.classList.remove('hidden');
-    }
-
-    // Redraw visible canvas charts with new theme colors
-    if (state.downloadsData) {
-      const dlCanvas = document.getElementById('downloads-chart');
-      drawDownloadsChart(dlCanvas, state.downloadsData.history, theme === 'dark');
-    }
-    if (state.isCompareOpen) {
-      fetchAndRenderCompare();
-    }
-  }
+  state.theme = 'light';
+  document.documentElement.removeAttribute('data-theme');
 }
 
 function setupKeyboardShortcuts() {
